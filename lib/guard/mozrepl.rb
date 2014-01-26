@@ -7,11 +7,12 @@ module Guard
 
     def initialize(watchers=[], options={})
       super
+      path_after = *options[:path_after]
       @options = {
         :host => options[:host] || 'localhost',
         :port => options[:port] || 4242,
         :verbose => options[:verbose] || false,
-        :path_after => options[:path_after] || ''
+        :path_after => path_after 
       }
       mozrepl
     end
@@ -45,7 +46,9 @@ module Guard
       return true if @serious_issue
       reload_tab = false
       paths.each do |path|
-        path = path.sub /^#{@options[:path_after]}/, ""
+        @options[:path_after].each do |pa|
+          path = path.sub /^#{pa}/, ""
+        end
         case path
         when /\.css$/ then reload_css(path)
         when /\.js$/ then reload_js(path)
